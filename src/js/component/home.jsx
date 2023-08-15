@@ -14,7 +14,7 @@ const Home = () => {
     if (inputValue !== "") {
       setTodos([...todos, inputValue]);
       setColor(randomColor());
-      alert('Has añadido una nueva tarea ', )
+      alert(`Has añadido la nueva tarea: ${inputValue}`, )
       setInputValue("");
     }
   };
