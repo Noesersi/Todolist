@@ -1,4 +1,4 @@
-const URL = "https://playground.4geeks.com/apis/fake/todos/user/Noesersi"
+const URL = "https://todolist-a460e-default-rtdb.europe-west1.firebasedatabase.app/NIT.json"
 export const getTodos = () => {
     return fetch(URL)
       .then((res) => {
@@ -8,12 +8,12 @@ export const getTodos = () => {
         return res.json();
       })
       .then((res) =>{
-        return res.data }
+        return res }
       )
       .catch((err) => console.log(err));
 }
 
-export const addTodos = async (todos) =>  
+export const modifyTodos = async (todos) =>  
 { return fetch(URL, {
       method: "PUT",
       body: JSON.stringify(todos),

@@ -2,7 +2,6 @@ function randomColor() {
     const colors = [
       "green",
       "blue",
-      "yellow",
       "red",
       "purple",
       "cian",
