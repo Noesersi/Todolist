@@ -1,60 +1,74 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { modifyTodos, getTodos } from "../services/services";
+import randomColor from "./randomColor";
+import TodoList from "./TodoList";
+import { makeRandomId } from "./randomID";
 // Create your first component
 const Home = () => {
   const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState([]);
-  const [color, setColor] = useState("black")
+  const [color, setColor] = useState("black");
+
+  useEffect(() => {
+    const llamarGetTodos = () => {
+    getTodos().then((data) => setTodos(data));
+    };
+    llamarGetTodos();
+  }, []);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+    console.log(e.target.value);
   };
 
-  const handleAddTodo = () => {
+  const handleAddTodo = (e) => {
+    e.preventDefault();
     if (inputValue !== "") {
-      setTodos([...todos, inputValue]);
+      const objInputValue = {
+        label: inputValue,
+        id: makeRandomId(2),
+        done: false,
+      }
+      setTodos([...todos, objInputValue]);
+      modifyTodos([...todos, objInputValue]);
       setColor(randomColor());
-      alert(`Has añadido la nueva tarea: ${inputValue}`, )
       setInputValue("");
-    }
+    }else alert("Campo vacio, pon algo!");
   };
-  const handleDeleteTodo = (index) => {
-    const newTodos = todos.filter((value,i) => i !== index);
-    alert('acabas de borrar una tarea!! ten cuidado no vayas a dejarte algo por hacer!!!')
-    setTodos(newTodos);
+  const handleDoneFalseOrTrue =(todo, e) => {
+    e.preventDefault();
+    const updatedTodos = todos.map((todoDone) => {
+      if (todoDone.id === todo.id) {
+        return {
+          ...todoDone,
+          done: !todoDone.done, 
+        };
+      }
+      return todoDone;
+    });
+    modifyTodos(updatedTodos);
+    setTodos(updatedTodos);
   };
-  function randomColor(){
-    const colors = [ 'green', 'blue', 'yellow', 'red', 'purple', 'cian', 'grey','orange']
-    const randomColor = Math.floor(Math.random()*colors.length);
-    return colors[randomColor];
-  }
+
+  const handleDeleteTodo =(todoID, e) => {
+    e.preventDefault();
+    const newCleanTodos = todos.filter((todo) => todoID !== todo.id);
+    modifyTodos(newCleanTodos);
+    setTodos(newCleanTodos);
+  };
 
   return (
-    <div className="container col-12 col-md-6">
-      <h1 style={{color: color}}>My ToDo's</h1>
-      <ul>
-        <li>
-          <input
-            type="text"
-            value={inputValue}
-            placeholder="What do you need to do baby??"
-            onChange={handleInputChange}
-          />
-          <i className="fa-solid fa-check icon" onClick={handleAddTodo}></i>
-        </li>
-        {todos.map((todo, index) => (
-          <li key={index}>
-            {todo}
-            <i
-              className="fas fa-trash-alt delete-icon"
-              onClick={() => handleDeleteTodo(index)}
-            ></i>
-          </li>
-        ))}
-        <div style={{color: color}}>{todos.length} tasks</div>
-      </ul>
-    </div>
-  );
-};
+    <>
+      <TodoList 
+      inputValue={inputValue}
+      todos={todos}
+      color={color}
+      handleInputChange={handleInputChange}
+      handleAddTodo={handleAddTodo}
+      handleDoneFalseOrTrue={handleDoneFalseOrTrue}
+      handleDeleteTodo={handleDeleteTodo}
+      />
+    </>
+)};
 
 export default Home;
